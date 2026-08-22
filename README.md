@@ -1,5 +1,12 @@
 # Cost Manager RESTful Web Services
 
+**Authors**
+
+| Name | ID | Phone | Email |
+|------|----|-------|-------|
+| Shavit Trop | 208121723 | 054-6146117 | shavittrop@gmail.com |
+| David Levy | 206540387 | 054-2250161 | dudi.levy25@gmail.com |
+
 Final project for the Asynchronous Server-Side Development course: a Cost Manager
 built as four independent Express/Mongoose/Pino microservices sharing one MongoDB
 Atlas database.
