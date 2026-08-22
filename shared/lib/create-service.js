@@ -19,6 +19,12 @@ function createService({ name, logger, registerRoutes }) {
   app.use(express.json());
   app.use(requestLogger(logger));
 
+  // Render probes the root path with HEAD/GET to verify that a web service is
+  // healthy. Express automatically handles HEAD for this GET route.
+  app.get('/', (req, res) => {
+    res.status(200).json({ status: 'ok', service: name });
+  });
+
   registerRoutes(app);
 
   app.use(notFoundHandler);

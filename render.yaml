@@ -15,6 +15,7 @@ services:
     plan: free
     buildCommand: npm ci
     startCommand: npm start --workspace @cost-manager/logs-service
+    healthCheckPath: /
     envVars:
       - fromGroup: cost-manager-shared-env
 
@@ -24,6 +25,7 @@ services:
     plan: free
     buildCommand: npm ci
     startCommand: npm start --workspace @cost-manager/users-service
+    healthCheckPath: /
     envVars:
       - fromGroup: cost-manager-shared-env
 
@@ -33,6 +35,7 @@ services:
     plan: free
     buildCommand: npm ci
     startCommand: npm start --workspace @cost-manager/costs-service
+    healthCheckPath: /
     envVars:
       - fromGroup: cost-manager-shared-env
 
@@ -42,6 +45,7 @@ services:
     plan: free
     buildCommand: npm ci
     startCommand: npm start --workspace @cost-manager/about-service
+    healthCheckPath: /
     envVars:
       - fromGroup: cost-manager-shared-env
       - key: TEAM_MEMBERS
