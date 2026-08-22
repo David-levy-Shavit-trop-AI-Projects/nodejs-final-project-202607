@@ -1,0 +1,13 @@
+{
+  "name": "@cost-manager/users-service",
+  "version": "1.0.0",
+  "description": "User microservice: GET /api/users, GET /api/users/:id, POST /api/add",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@cost-manager/shared": "*"
+  }
+}

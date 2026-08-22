@@ -1,0 +1,13 @@
+{
+  "name": "@cost-manager/costs-service",
+  "version": "1.0.0",
+  "description": "Cost microservice: POST /api/add, GET /api/report",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@cost-manager/shared": "*"
+  }
+}

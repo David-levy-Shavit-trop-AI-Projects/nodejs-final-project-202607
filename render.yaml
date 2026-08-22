@@ -1,0 +1,48 @@
+envVarGroups:
+  - name: cost-manager-shared-env
+    envVars:
+      - key: MONGODB_URI
+        sync: false # set the real Atlas connection string once in the Render dashboard
+      - key: MONGODB_DB_NAME
+        value: cost_manager
+      - key: LOG_LEVEL
+        value: info
+
+services:
+  - type: web
+    name: cost-manager-logs-service
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start --workspace @cost-manager/logs-service
+    envVars:
+      - fromGroup: cost-manager-shared-env
+
+  - type: web
+    name: cost-manager-users-service
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start --workspace @cost-manager/users-service
+    envVars:
+      - fromGroup: cost-manager-shared-env
+
+  - type: web
+    name: cost-manager-costs-service
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start --workspace @cost-manager/costs-service
+    envVars:
+      - fromGroup: cost-manager-shared-env
+
+  - type: web
+    name: cost-manager-about-service
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm start --workspace @cost-manager/about-service
+    envVars:
+      - fromGroup: cost-manager-shared-env
+      - key: TEAM_MEMBERS
+        value: "Shavit:Trop,David:Levy"

@@ -1,0 +1,14 @@
+{
+  "name": "@cost-manager/shared",
+  "version": "1.0.0",
+  "description": "Shared Mongoose models, logger, error handling, and Express app factory used by every microservice.",
+  "private": true,
+  "main": "index.js",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.9.3",
+    "pino": "^10.3.1",
+    "pino-http": "^11.0.0"
+  }
+}

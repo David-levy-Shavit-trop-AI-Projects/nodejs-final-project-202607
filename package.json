@@ -1,0 +1,28 @@
+{
+  "name": "cost-manager-restful-web-services",
+  "version": "1.0.0",
+  "description": "Final project: Cost Manager RESTful Web Services implemented as four Express/Mongoose/Pino microservices.",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "services/*"
+  ],
+  "scripts": {
+    "seed": "node scripts/seed.js",
+    "start:logs": "npm start --workspace @cost-manager/logs-service",
+    "start:users": "npm start --workspace @cost-manager/users-service",
+    "start:costs": "npm start --workspace @cost-manager/costs-service",
+    "start:about": "npm start --workspace @cost-manager/about-service",
+    "start:all": "node scripts/start-all.js",
+    "test": "jest --runInBand",
+    "test:watch": "jest --runInBand --watch"
+  },
+  "devDependencies": {
+    "jest": "^30.4.2",
+    "mongodb-memory-server": "^11.2.0",
+    "supertest": "^7.2.2"
+  },
+  "engines": {
+    "node": ">=18.18.0"
+  }
+}

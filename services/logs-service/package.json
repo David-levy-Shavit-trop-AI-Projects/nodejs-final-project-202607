@@ -1,0 +1,13 @@
+{
+  "name": "@cost-manager/logs-service",
+  "version": "1.0.0",
+  "description": "Admin microservice: GET /api/logs",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@cost-manager/shared": "*"
+  }
+}
