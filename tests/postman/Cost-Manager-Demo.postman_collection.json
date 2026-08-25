@@ -1,0 +1,194 @@
+{
+  "info": {
+    "_postman_id": "e578ff81-22a1-4a3c-8d5f-28aa7779a695",
+    "name": "Cost Manager - Demo",
+    "description": "Demo collection for the four deployed Cost Manager microservices. Requests marked WRITE change the shared database.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const now = new Date();",
+          "pm.collectionVariables.set('currentYear', String(now.getFullYear()));",
+          "pm.collectionVariables.set('currentMonth', String(now.getMonth() + 1));"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    { "key": "logsUrl", "value": "https://cost-manager-logs-service-out6.onrender.com" },
+    { "key": "usersUrl", "value": "https://cost-manager-users-service-mcj2.onrender.com" },
+    { "key": "costsUrl", "value": "https://cost-manager-costs-service-nqfh.onrender.com" },
+    { "key": "aboutUrl", "value": "https://cost-manager-about-service-39k6.onrender.com" },
+    { "key": "userId", "value": "123123" },
+    { "key": "currentYear", "value": "2026" },
+    { "key": "currentMonth", "value": "8" }
+  ],
+  "item": [
+    {
+      "name": "1 - About",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{aboutUrl}}/api/about/",
+        "description": "Returns the project developers."
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+          "pm.test('Response is an array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+        ] }
+      }]
+    },
+    {
+      "name": "2 - WRITE - Add User",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": {{demoUserId}},\n  \"first_name\": \"Demo\",\n  \"last_name\": \"User\",\n  \"birthday\": \"2000-01-01\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{usersUrl}}/api/add/",
+        "description": "Creates a demo user with a newly generated ID. This changes the database."
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const demoUserId = Date.now() % 1000000000;",
+              "pm.collectionVariables.set('demoUserId', String(demoUserId));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('User was created', () => pm.response.to.have.status(201));",
+              "pm.test('Returned ID matches the generated ID', () => pm.expect(pm.response.json().id).to.eql(Number(pm.collectionVariables.get('demoUserId'))));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "3 - Get All Users",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{usersUrl}}/api/users/",
+        "description": "Returns all users."
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+          "pm.test('Response is an array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+        ] }
+      }]
+    },
+    {
+      "name": "4 - Verify Added User",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{usersUrl}}/api/users/{{demoUserId}}",
+        "description": "Returns the user created by Add User."
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+          "pm.test('New user starts with total 0', () => pm.expect(pm.response.json().total).to.eql(0));"
+        ] }
+      }]
+    },
+    {
+      "name": "5 - WRITE - Add Cost",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userid\": {{userId}},\n  \"description\": \"milk - Postman demo\",\n  \"category\": \"food\",\n  \"sum\": 8\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{costsUrl}}/api/add/",
+        "description": "Adds a cost in the current month and increments the user's computed total. This changes the database."
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "pm.test('Cost was created', () => pm.response.to.have.status(201));",
+          "pm.test('Returned cost belongs to the demo user', () => pm.expect(pm.response.json().userid).to.eql(Number(pm.collectionVariables.get('userId'))));"
+        ] }
+      }]
+    },
+    {
+      "name": "6 - Verify Updated User Total",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{usersUrl}}/api/users/{{userId}}",
+        "description": "Run immediately after Add Cost to show that the computed total was incremented."
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+          "pm.test('Updated total is present', () => pm.expect(pm.response.json().total).to.be.a('number').and.above(0));"
+        ] }
+      }]
+    },
+    {
+      "name": "7 - Current Monthly Report",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{costsUrl}}/api/report/?id={{userId}}&year={{currentYear}}&month={{currentMonth}}",
+          "host": ["{{costsUrl}}"],
+          "path": ["api", "report", ""],
+          "query": [
+            { "key": "id", "value": "{{userId}}" },
+            { "key": "year", "value": "{{currentYear}}" },
+            { "key": "month", "value": "{{currentMonth}}" }
+          ]
+        },
+        "description": "Builds the report for the current month. Year and month are set automatically."
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+          "pm.test('Report contains five category groups', () => pm.expect(pm.response.json().costs).to.be.an('array').with.lengthOf(5));"
+        ] }
+      }]
+    },
+    {
+      "name": "8 - Get Recent Logs",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{logsUrl}}/api/logs/?limit=20",
+        "description": "Shows the latest service logs generated during the demo."
+      },
+      "event": [{
+        "listen": "test",
+        "script": { "type": "text/javascript", "exec": [
+          "pm.test('Status is 200', () => pm.response.to.have.status(200));",
+          "pm.test('Response is an array', () => pm.expect(pm.response.json()).to.be.an('array'));"
+        ] }
+      }]
+    }
+  ]
+}

@@ -8,10 +8,10 @@ filename = sys.argv[1] if len(sys.argv) > 1 else "test_project_output.txt"
 # The third will handle all cost-related tasks. (c)
 # The fourth will handle any admin-related tasks (e.g. developers details) (d)
 
-a = "http://localhost:3001"
-b = "http://localhost:3002"
-c = "http://localhost:3003"
-d = "http://localhost:3004"
+a = "https://cost-manager-logs-service-out6.onrender.com"
+b = "https://cost-manager-users-service-mcj2.onrender.com"
+c = "https://cost-manager-costs-service-nqfh.onrender.com"
+d = "https://cost-manager-about-service-39k6.onrender.com"
 
 output = open(filename, "w")
 sys.stdout = output
