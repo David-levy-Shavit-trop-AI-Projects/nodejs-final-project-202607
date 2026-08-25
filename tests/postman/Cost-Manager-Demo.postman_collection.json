@@ -5,35 +5,13 @@
     "description": "Demo collection for the four deployed Cost Manager microservices. Requests marked WRITE change the shared database.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
-  "event": [
-    {
-      "listen": "prerequest",
-      "script": {
-        "type": "text/javascript",
-        "exec": [
-          "const now = new Date();",
-          "pm.collectionVariables.set('currentYear', String(now.getFullYear()));",
-          "pm.collectionVariables.set('currentMonth', String(now.getMonth() + 1));"
-        ]
-      }
-    }
-  ],
-  "variable": [
-    { "key": "logsUrl", "value": "https://cost-manager-logs-service-out6.onrender.com" },
-    { "key": "usersUrl", "value": "https://cost-manager-users-service-mcj2.onrender.com" },
-    { "key": "costsUrl", "value": "https://cost-manager-costs-service-nqfh.onrender.com" },
-    { "key": "aboutUrl", "value": "https://cost-manager-about-service-39k6.onrender.com" },
-    { "key": "userId", "value": "123123" },
-    { "key": "currentYear", "value": "2026" },
-    { "key": "currentMonth", "value": "8" }
-  ],
   "item": [
     {
       "name": "1 - About",
       "request": {
         "method": "GET",
         "header": [],
-        "url": "{{aboutUrl}}/api/about/",
+        "url": "https://cost-manager-about-service-39k6.onrender.com/api/about/",
         "description": "Returns the project developers."
       },
       "event": [{
@@ -51,30 +29,20 @@
         "header": [{ "key": "Content-Type", "value": "application/json" }],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"id\": {{demoUserId}},\n  \"first_name\": \"Demo\",\n  \"last_name\": \"User\",\n  \"birthday\": \"2000-01-01\"\n}",
+          "raw": "{\n  \"id\": 555555,\n  \"first_name\": \"Demo\",\n  \"last_name\": \"User\",\n  \"birthday\": \"2000-01-01\"\n}",
           "options": { "raw": { "language": "json" } }
         },
-        "url": "{{usersUrl}}/api/add/",
+        "url": "https://cost-manager-users-service-mcj2.onrender.com/api/add/",
         "description": "Creates a demo user with a newly generated ID. This changes the database."
       },
       "event": [
-        {
-          "listen": "prerequest",
-          "script": {
-            "type": "text/javascript",
-            "exec": [
-              "const demoUserId = Date.now() % 1000000000;",
-              "pm.collectionVariables.set('demoUserId', String(demoUserId));"
-            ]
-          }
-        },
         {
           "listen": "test",
           "script": {
             "type": "text/javascript",
             "exec": [
               "pm.test('User was created', () => pm.response.to.have.status(201));",
-              "pm.test('Returned ID matches the generated ID', () => pm.expect(pm.response.json().id).to.eql(Number(pm.collectionVariables.get('demoUserId'))));"
+              "pm.test('Returned ID is 555555', () => pm.expect(pm.response.json().id).to.eql(555555));"
             ]
           }
         }
@@ -85,7 +53,7 @@
       "request": {
         "method": "GET",
         "header": [],
-        "url": "{{usersUrl}}/api/users/",
+        "url": "https://cost-manager-users-service-mcj2.onrender.com/api/users/",
         "description": "Returns all users."
       },
       "event": [{
@@ -101,7 +69,7 @@
       "request": {
         "method": "GET",
         "header": [],
-        "url": "{{usersUrl}}/api/users/{{demoUserId}}",
+        "url": "https://cost-manager-users-service-mcj2.onrender.com/api/users/555555",
         "description": "Returns the user created by Add User."
       },
       "event": [{
@@ -119,17 +87,17 @@
         "header": [{ "key": "Content-Type", "value": "application/json" }],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"userid\": {{userId}},\n  \"description\": \"milk - Postman demo\",\n  \"category\": \"food\",\n  \"sum\": 8\n}",
+          "raw": "{\n  \"userid\": 123123,\n  \"description\": \"milk - Postman demo\",\n  \"category\": \"food\",\n  \"sum\": 8\n}",
           "options": { "raw": { "language": "json" } }
         },
-        "url": "{{costsUrl}}/api/add/",
+        "url": "https://cost-manager-costs-service-nqfh.onrender.com/api/add/",
         "description": "Adds a cost in the current month and increments the user's computed total. This changes the database."
       },
       "event": [{
         "listen": "test",
         "script": { "type": "text/javascript", "exec": [
           "pm.test('Cost was created', () => pm.response.to.have.status(201));",
-          "pm.test('Returned cost belongs to the demo user', () => pm.expect(pm.response.json().userid).to.eql(Number(pm.collectionVariables.get('userId'))));"
+          "pm.test('Returned cost belongs to user 123123', () => pm.expect(pm.response.json().userid).to.eql(123123));"
         ] }
       }]
     },
@@ -138,7 +106,7 @@
       "request": {
         "method": "GET",
         "header": [],
-        "url": "{{usersUrl}}/api/users/{{userId}}",
+        "url": "https://cost-manager-users-service-mcj2.onrender.com/api/users/123123",
         "description": "Run immediately after Add Cost to show that the computed total was incremented."
       },
       "event": [{
@@ -154,16 +122,7 @@
       "request": {
         "method": "GET",
         "header": [],
-        "url": {
-          "raw": "{{costsUrl}}/api/report/?id={{userId}}&year={{currentYear}}&month={{currentMonth}}",
-          "host": ["{{costsUrl}}"],
-          "path": ["api", "report", ""],
-          "query": [
-            { "key": "id", "value": "{{userId}}" },
-            { "key": "year", "value": "{{currentYear}}" },
-            { "key": "month", "value": "{{currentMonth}}" }
-          ]
-        },
+        "url": "https://cost-manager-costs-service-nqfh.onrender.com/api/report/?id=123123&year=2026&month=8",
         "description": "Builds the report for the current month. Year and month are set automatically."
       },
       "event": [{
@@ -179,7 +138,7 @@
       "request": {
         "method": "GET",
         "header": [],
-        "url": "{{logsUrl}}/api/logs/?limit=20",
+        "url": "https://cost-manager-logs-service-out6.onrender.com/api/logs/?limit=20",
         "description": "Shows the latest service logs generated during the demo."
       },
       "event": [{
